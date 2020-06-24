@@ -17,9 +17,11 @@ pub fn setup(
         .with_title(window_title)
         .with_maximized(true);
     // multisampling: 2 looks bad, 4 looks fine
-    let context = glutin::ContextBuilder::new()
-        .with_multisampling(4)
-        .with_depth_buffer(2);
+    //
+    // Only need 2 bits for the depth buffer, but lots of Windows video cards apparently don't
+    // support that low. Keep the default 24. https://github.com/dabreegster/abstreet/issues/79
+    let mut context = glutin::ContextBuilder::new().with_multisampling(4);
+    context.pf_reqs.color_bits = None;
     let display = glium::Display::new(window, context, &event_loop).unwrap();
 
     let (vertex_shader, fragment_shader) =
